@@ -9,7 +9,7 @@ public class ResourceManager {
 
     private static final String URL = "jdbc:mysql://localhost:3306/notas_db?createDatabaseIfNotExist=true";
     private static final String USUARIO = "root";
-    private static final String SENHA = "alunofatec";
+    private static final String SENHA = "123456";
 
     public static Connection getConnection() throws SQLException {
         Connection con = DriverManager.getConnection(URL, USUARIO, SENHA);

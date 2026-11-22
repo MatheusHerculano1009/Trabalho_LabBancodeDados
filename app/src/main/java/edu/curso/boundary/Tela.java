@@ -14,12 +14,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 
 public class Tela extends Application {
 
@@ -40,8 +44,13 @@ public class Tela extends Application {
 
     public void start(Stage stage) {
 
-        PainelNotas pane = new PainelNotas();
-        Scene scen = new Scene(pane, 620, 620);
+    //    PainelNotas pane = new PainelNotas();
+    //    Scene scen = new Scene(pane, 620, 620);
+    TabPane abas = new TabPane(
+        new Tab("Notas Fiscais", new PainelNotas()),
+        new Tab("Fornecedores", new PainelFornecedor()));
+    abas.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+    Scene scen = new Scene(abas, 980, 680);
         stage.setTitle("CRUD - Nota Fiscal");
         stage.setScene(scen);
         stage.show();
