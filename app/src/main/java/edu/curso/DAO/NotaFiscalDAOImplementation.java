@@ -1,5 +1,6 @@
 package edu.curso.DAO;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -142,6 +143,21 @@ public class NotaFiscalDAOImplementation implements NotaFiscalDAO {
             e.printStackTrace();
         }
         return lista;
+    }
+
+    @Override
+    public void adicionarViaProcedure(NotaFiscal nf) throws SQLException {
+        String sql = "{CALL sp_inserir_nota_fiscal(?, ?, ?, ?, ?, ?)}";
+
+        try(CallableStatement cs = con.prepareCall(sql)){
+            cs.setInt(1, nf.getNumero());
+             cs.setDate(2, java.sql.Date.valueOf(nf.getDataEmissao()));
+            cs.setString(3, nf.getFornecedor());
+            cs.setDouble(4, nf.getValorTotal());
+            cs.setDate(5, java.sql.Date.valueOf(nf.getDataVencimento()));
+            cs.setString(6, nf.getObservacao());
+            cs.execute();
+        }
     }
 
 }
