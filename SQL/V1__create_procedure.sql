@@ -1,3 +1,5 @@
+USE assistencia_tecnica;
+
 DELIMITER $$
 CREATE PROCEDURE sp_inserir_nota_fiscal(
     IN p_numero INT,

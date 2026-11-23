@@ -60,6 +60,17 @@ public class NotaFiscalController {
         }       
     }
 
+    // Retorna "" em caso de sucesso, ou a mensagem de erro vinda do banco (ex.: SIGNAL da procedure)
+    public String adicionarViaProcedure(NotaFiscal nf) {
+        try {
+            i.adicionarViaProcedure(nf);
+            return "";
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+    }
+
     public ObservableList<NotaFiscal> pesquisar(String texto) {
         List<NotaFiscal> lista = new ArrayList<>();
         ObservableList<NotaFiscal> listaPesquisa = FXCollections.observableArrayList();

@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -162,14 +163,29 @@ public class Tela extends Application {
                 }
                 NotaFiscal nf = c.toEntity(txtNumero.getText(), dpDataEmissao.getValue(), txtFornecedor.getText(),
                                 txtValorTotal.getText(), dpDataVencimento.getValue(), txtObservacao.getText());
-                if (c.notaExiste(nf)) {
-                    mensagemErroAdicao("Já existe uma nota com esse número e fornecedor.\nSelecione-a na tabela e use 'Atualizar'.");
-                } else {
-                    c.adicionar(nf);
-                    mensagemSucessoAdicao();
-                    limparCampos();
-                    tabela.setItems(c.listarTodas());
+
+                String forma = escolherFormaAdicao();
+                if (forma == null) {
+                    return; // usuário cancelou
                 }
+
+                if (forma.equals("padrao")) {
+                    if (c.notaExiste(nf)) {
+                        mensagemErroAdicao("Já existe uma nota com esse número e fornecedor.\nSelecione-a na tabela e use 'Atualizar'.");
+                        return;
+                    }
+                    c.adicionar(nf);
+                } else {
+                    // a própria procedure valida duplicidade/regras e devolve a mensagem de erro
+                    String erro = c.adicionarViaProcedure(nf);
+                    if (!erro.isBlank()) {
+                        mensagemErroAdicao(erro);
+                        return;
+                    }
+                }
+                mensagemSucessoAdicao();
+                limparCampos();
+                tabela.setItems(c.listarTodas());
             }
             if (botao.getText().equals("Pesquisar")) {
                 String texto = txtPesquisar.getText();
@@ -250,6 +266,26 @@ public class Tela extends Application {
         } else {
             return false;
         }
+    }
+
+    // Retorna "padrao", "procedure" ou null (cancelado)
+    public String escolherFormaAdicao() {
+        Alert alerta = new Alert(AlertType.CONFIRMATION);
+        alerta.setTitle("Adicionar Nota Fiscal");
+        alerta.setHeaderText("Como deseja adicionar a nota?");
+        alerta.setContentText("Padrão: INSERT direto pelo Java.\nVia Procedure: chama sp_inserir_nota_fiscal no banco.");
+        ButtonType padrao = new ButtonType("Padrão");
+        ButtonType procedure = new ButtonType("Via Procedure");
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alerta.getButtonTypes().setAll(padrao, procedure, cancelar);
+        Optional<ButtonType> opcao = alerta.showAndWait();
+        if (opcao.isPresent() && opcao.get() == padrao) {
+            return "padrao";
+        }
+        if (opcao.isPresent() && opcao.get() == procedure) {
+            return "procedure";
+        }
+        return null;
     }
 
     public void mensagemSucessoDelecao() {
